@@ -1,0 +1,6 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="CompanyLookUp.Api.UnitTests/CompanyLookUp.Api.UnitTests.csproj" />
+    <Project Path="CompanyLookup.Api/CompanyLookup.Api.csproj" />
+  </Folder>
+</Solution>
