@@ -6,7 +6,9 @@ namespace CompanyLookup.Api.Endpoints.Companies
     public static class GetSearchCompaniesByName
     {
         public static async Task<IResult> Handle(
-            string name,
+            [FromQuery] string name,
+            [FromQuery] int page,
+            [FromQuery] int size,
             [FromServices] ICompanyService service,
             CancellationToken cancellationToken)
         {
@@ -17,7 +19,29 @@ namespace CompanyLookup.Api.Endpoints.Companies
                     return Results.BadRequest("Missing name.");
                 }
 
-                var companies = await service.SearchAsync(name, cancellationToken);
+                name = name.Trim();
+
+                if (name.Length < 2) // Just to avoid unecessary calls to the service with very short names that are unlikely to yield useful results
+                {
+                    return Results.BadRequest("Name must be at least 2 characters.");
+                }
+
+                if (page < 0)
+                {
+                    return Results.BadRequest("Page must be 0 or greater.");
+                }
+
+                if (size < 10)
+                {
+                    return Results.BadRequest("Size must be greater than 10.");
+                }
+
+                if (size > 20)
+                {
+                    return Results.BadRequest("Size must be less than 20.");
+                }
+
+                var companies = await service.SearchAsync(name, page, size, cancellationToken);
 
                 return Results.Ok(companies);
             }

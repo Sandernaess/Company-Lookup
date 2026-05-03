@@ -6,6 +6,6 @@ namespace CompanyLookup.Api.Services.Companies
     {
         Task<CompanyResponse> GetAsync(string orgnr, CancellationToken cancellationToken);
 
-        Task<IEnumerable<CompanyResponse>> SearchAsync(string name, CancellationToken cancellationToken);
+        Task<IEnumerable<CompanyResponse>> SearchAsync(string name, int page, int size, CancellationToken cancellationToken);
     }
 }

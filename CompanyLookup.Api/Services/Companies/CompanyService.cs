@@ -14,7 +14,6 @@ namespace CompanyLookup.Api.Services.Companies
             }
             
             EnhetResponse? response = await service.GetEnhet(orgnr, cancellationToken);
-
             if (response is null)
             {
                 throw new Exception("Enhet not found in brreg");
@@ -23,14 +22,18 @@ namespace CompanyLookup.Api.Services.Companies
             return response.ToCompany();
         }
 
-        public async Task<IEnumerable<CompanyResponse>> SearchAsync(string name, CancellationToken cancellationToken)
+        public async Task<IEnumerable<CompanyResponse>> SearchAsync(string name, int page, int size, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
                 throw new ArgumentException("Name cannot be empty.", nameof(name));
             }
 
-            var response = await service.SearchEnheterByName(name, cancellationToken);
+            var query = new EnhetSearchQuery(name, page, size);
+
+            var response = await service.SearchEnheterByName(
+                query, 
+                cancellationToken);
 
             if (response is null || !response.Any())
             {

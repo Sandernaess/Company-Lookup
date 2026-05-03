@@ -3,6 +3,8 @@
     public interface IEnhetService
     {
         Task<EnhetResponse?> GetEnhet(string orgnr, CancellationToken cancellationToken);
-        Task<IEnumerable<EnhetResponse>> SearchEnheterByName(string name, CancellationToken cancellationToken);
+        Task<IEnumerable<EnhetResponse>> SearchEnheterByName(
+            EnhetSearchQuery query, 
+            CancellationToken cancellationToken);
     }
 }

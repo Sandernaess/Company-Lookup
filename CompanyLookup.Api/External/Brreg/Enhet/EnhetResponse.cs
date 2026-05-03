@@ -17,19 +17,6 @@
         public string? Epostadresse { get; set; }
         public string? Telefon { get; set; }
         public string? Mobil { get; set; }
-
-        public Kapital? Kapital { get; set; }
-    }
-
-    public class Kapital
-    {
-        public int AntallAksjer { get; set; }
-        public string? Type { get; set; }
-        public int Bundet { get; set; }
-        public string? Valuta { get; set; }
-        public int Innbetalt { get; set; }
-        public bool FulltInnbetalt { get; set; }
-        public string? InnfortDato { get; set; }
     }
 }
 

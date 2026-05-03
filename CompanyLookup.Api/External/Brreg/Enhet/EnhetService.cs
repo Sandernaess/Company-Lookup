@@ -4,26 +4,40 @@
     {
         private readonly IBrregApiClient _apiClient = brregApiClient;
 
-        public async Task<EnhetResponse?> GetEnhet(string orgnr, CancellationToken cancellationToken)
+        private const int DefaultPage = 1;
+        private const int DefaultSize = 10;
+        private const int MaxSize = 20;
+
+        public async Task<EnhetResponse?> GetEnhet(
+            string orgnr, 
+            CancellationToken cancellationToken)
         {
             return await _apiClient.GetAsync<EnhetResponse>(
                 $"enheter/{orgnr}", 
                 cancellationToken);
         }
 
-        public async Task<IEnumerable<EnhetResponse>> SearchEnheterByName(string name, CancellationToken cancellationToken)
+        public async Task<IEnumerable<EnhetResponse>> SearchEnheterByName(
+            EnhetSearchQuery query, 
+            CancellationToken cancellationToken)
         {
-            if (string.IsNullOrWhiteSpace(name))
+            if (string.IsNullOrWhiteSpace(query.Name))
             {
                 return [];
             }
 
-            name = name.Trim();
+            var name = query.Name.Trim();
 
             var encodedName = Uri.EscapeDataString(name);
 
+            var page = Math.Max(query.Page, DefaultPage);
+            var size = Math.Clamp(query.Size, DefaultSize, MaxSize);
+
+            var endpoint =
+                $"enheter?navn={encodedName}&page={page}&size={size}";
+
             var result = await _apiClient.GetAsync<EnhetSearchResponse>(
-                $"enheter?navn={encodedName}",
+                endpoint,
                 cancellationToken);
 
             return result?.Embedded?.Enheter ?? [];
