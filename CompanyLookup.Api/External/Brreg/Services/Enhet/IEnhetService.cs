@@ -1,4 +1,6 @@
-﻿namespace CompanyLookup.Api.External.Brreg.Enhet
+﻿using CompanyLookup.Api.External.Brreg.Models.Enhet;
+
+namespace CompanyLookup.Api.External.Brreg.Services.Enhet
 {
     public interface IEnhetService
     {

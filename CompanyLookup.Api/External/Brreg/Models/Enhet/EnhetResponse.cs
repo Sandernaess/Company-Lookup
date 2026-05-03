@@ -1,4 +1,4 @@
-﻿namespace CompanyLookup.Api.External.Brreg.Enhet
+﻿namespace CompanyLookup.Api.External.Brreg.Models.Enhet
 {
     public class EnhetResponse
     {

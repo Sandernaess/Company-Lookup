@@ -1,4 +1,4 @@
-﻿using CompanyLookup.Api.External.Brreg.Enhet;
+﻿using CompanyLookup.Api.External.Brreg.Models.Enhet;
 using CompanyLookup.Api.Models.Companies;
 
 namespace CompanyLookup.Api.Mapping.Companies

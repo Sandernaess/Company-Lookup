@@ -1,4 +1,5 @@
-﻿using CompanyLookup.Api.External.Brreg.Enhet;
+﻿using CompanyLookup.Api.External.Brreg.Models.Enhet;
+using CompanyLookup.Api.External.Brreg.Services.Enhet;
 using CompanyLookup.Api.Mapping.Companies;
 using CompanyLookup.Api.Models.Companies;
 
