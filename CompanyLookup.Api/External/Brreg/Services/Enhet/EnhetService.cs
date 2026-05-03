@@ -10,7 +10,7 @@ namespace CompanyLookup.Api.External.Brreg.Services.Enhet
         private const int DefaultSize = 10;
         private const int MaxSize = 20;
 
-        public async Task<EnhetResponse?> GetEnhet(
+        public async Task<EnhetResponse?> GetEnhetAsync(
             string orgnr, 
             CancellationToken cancellationToken)
         {
@@ -19,8 +19,8 @@ namespace CompanyLookup.Api.External.Brreg.Services.Enhet
                 cancellationToken);
         }
 
-        public async Task<IEnumerable<EnhetResponse>> SearchEnheterByName(
-            EnhetSearchQuery query, 
+        public async Task<IEnumerable<EnhetResponse>> SearchEnheterByNameAsync(
+            EnhetSearchQuery query,
             CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(query.Name))

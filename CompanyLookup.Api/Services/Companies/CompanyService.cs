@@ -14,7 +14,7 @@ namespace CompanyLookup.Api.Services.Companies
                 throw new ArgumentException("Organization number cannot be empty.", nameof(orgnr));
             }
             
-            EnhetResponse? response = await service.GetEnhet(orgnr, cancellationToken);
+            EnhetResponse? response = await service.GetEnhetAsync(orgnr, cancellationToken);
             if (response is null)
             {
                 throw new Exception("Enhet not found in brreg");
@@ -32,7 +32,7 @@ namespace CompanyLookup.Api.Services.Companies
 
             var query = new EnhetSearchQuery(name, page, size);
 
-            var response = await service.SearchEnheterByName(
+            IEnumerable<EnhetResponse> response = await service.SearchEnheterByNameAsync(
                 query, 
                 cancellationToken);
 

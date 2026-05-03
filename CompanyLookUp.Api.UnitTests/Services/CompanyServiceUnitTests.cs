@@ -38,7 +38,7 @@ namespace CompanyLookUp.Api.UnitTests.Services
             var orgnr = "123456789";
 
             _enhetService
-                .GetEnhet(orgnr, _ct)
+                .GetEnhetAsync(orgnr, _ct)
                 .Returns((EnhetResponse?)null);
 
             var exception = await Assert.ThrowsExactlyAsync<Exception>(
@@ -56,14 +56,14 @@ namespace CompanyLookUp.Api.UnitTests.Services
             var enhetResponse = CreateSampleEnhetResponse(orgnr);
 
             _enhetService
-                .GetEnhet(orgnr, _ct)
+                .GetEnhetAsync(orgnr, _ct)
                 .Returns(enhetResponse);
 
             await _companyService.GetAsync(orgnr, _ct);
 
             await _enhetService
                 .Received(1)
-                .GetEnhet(orgnr, _ct);
+                .GetEnhetAsync(orgnr, _ct);
         }
 
         [TestMethod]
@@ -73,7 +73,7 @@ namespace CompanyLookUp.Api.UnitTests.Services
             var enhetResponse = CreateSampleEnhetResponse(orgnr);
 
             _enhetService
-                .GetEnhet(orgnr, CancellationToken.None)
+                .GetEnhetAsync(orgnr, CancellationToken.None)
                 .Returns(enhetResponse);
 
             var result = await _companyService.GetAsync(orgnr, CancellationToken.None);
