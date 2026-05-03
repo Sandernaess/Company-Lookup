@@ -14,7 +14,7 @@ namespace CompanyLookup.Api.Endpoints
                 .Produces(StatusCodes.Status400BadRequest)
                 .Produces(StatusCodes.Status500InternalServerError);
 
-            group.MapGet("/search", GetSearchCompaniesByName.Handle)
+            group.MapGet("/search", GetSearchCompanies.Handle)
                 .Produces<List<CompanyResponse>>(StatusCodes.Status200OK)
                 .Produces(StatusCodes.Status400BadRequest)
                 .Produces(StatusCodes.Status500InternalServerError);
