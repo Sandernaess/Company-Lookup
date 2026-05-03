@@ -4,8 +4,8 @@
     {
         public required string Organisasjonsnummer { get; set; }
         public required string Navn { get; set; }
-        public EnhetAdresse? Postadresse { get; set; }
-        public EnhetAdresse? Forretningsadresse { get; set; }
+        public EnhetAdresseResponse? Postadresse { get; set; }
+        public EnhetAdresseResponse? Forretningsadresse { get; set; }
 
         public bool Konkurs { get; set; }
         public string? Konkursdato { get; set; }
@@ -19,17 +19,6 @@
         public string? Mobil { get; set; }
 
         public Kapital? Kapital { get; set; }
-    }
-
-    public class EnhetAdresse
-    {
-        public string? Kommune { get; set; }
-        public string? Landkode { get; set; }
-        public string? Postnummer { get; set; }
-        public string[]? Adresse { get; set; }
-        public string? Land { get; set; }
-        public string? Kommunenummer { get; set; }
-        public string? Poststed { get; set; }
     }
 
     public class Kapital

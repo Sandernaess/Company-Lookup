@@ -10,7 +10,7 @@ namespace CompanyLookup.Api.Services.Companies
         {
             if (string.IsNullOrWhiteSpace(orgnr))
             {
-                throw new ArgumentNullException(nameof(orgnr));
+                throw new ArgumentException("Organization number cannot be empty.", nameof(orgnr));
             }
             
             EnhetResponse? response = await service.GetEnhet(orgnr, cancellationToken);
@@ -21,6 +21,23 @@ namespace CompanyLookup.Api.Services.Companies
             }
 
             return response.ToCompany();
+        }
+
+        public async Task<IEnumerable<CompanyResponse>> SearchAsync(string name, CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                throw new ArgumentException("Name cannot be empty.", nameof(name));
+            }
+
+            var response = await service.SearchEnheterByName(name, cancellationToken);
+
+            if (response is null || !response.Any())
+            {
+                return [];
+            }
+
+            return response.Select(r => r.ToCompany());
         }
     }
 }

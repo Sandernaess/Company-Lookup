@@ -23,11 +23,12 @@ namespace CompanyLookUp.Api.UnitTests.Services
         [DataRow(null)]
         [DataRow("")]
         [DataRow("   ")]
-        public async Task GetAsync_With_Invalid_Orgnr_Throws_ArgumentNullException(string invalidOrgnr)
+        public async Task GetAsync_With_Invalid_Orgnr_Throws_ArgumentException(string invalidOrgnr)
         {
-            await Assert.ThrowsExactlyAsync<ArgumentNullException>(
-                async () => await _companyService.GetAsync(invalidOrgnr, _ct)
-            );
+            var ex = await Assert.ThrowsExactlyAsync<ArgumentException>(
+                () => _companyService.GetAsync(invalidOrgnr, _ct));
+
+            Assert.Contains("orgnr", ex.Message);
         }
 
         [TestMethod]

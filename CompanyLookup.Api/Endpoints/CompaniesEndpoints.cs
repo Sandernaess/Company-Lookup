@@ -10,7 +10,14 @@ namespace CompanyLookup.Api.Endpoints
             RouteGroupBuilder group = app.MapGroup("/companies").WithTags("Companies");
 
             group.MapGet("/{orgnr}", GetCompanyByOrgnr.Handle)
-                .Produces<CompanyResponse>(StatusCodes.Status200OK);
+                .Produces<CompanyResponse>(StatusCodes.Status200OK)
+                .Produces(StatusCodes.Status400BadRequest)
+                .Produces(StatusCodes.Status500InternalServerError);
+
+            group.MapGet("/search", GetSearchCompaniesByName.Handle)
+                .Produces<List<CompanyResponse>>(StatusCodes.Status200OK)
+                .Produces(StatusCodes.Status400BadRequest)
+                .Produces(StatusCodes.Status500InternalServerError);
         }
     }
 }

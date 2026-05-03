@@ -142,7 +142,7 @@ namespace CompanyLookUp.Api.UnitTests.Mapping
                 Hjemmeside = "www.testcompany.com",
                 Epostadresse = "test@company.com",
                 Mobil = "12345678",
-                Forretningsadresse = new EnhetAdresse
+                Forretningsadresse = new()
                 {
                     Adresse = ["Main Street 1"],
                     Postnummer = "4012",
@@ -164,7 +164,7 @@ namespace CompanyLookUp.Api.UnitTests.Mapping
                 Navn = "Test Company",
                 HarRegistrertAntallAnsatte = true,
                 AntallAnsatte = 10,
-                Forretningsadresse = new EnhetAdresse
+                Forretningsadresse = new()
                 {
                     Adresse = [adresse],
                     Postnummer = postnummer,

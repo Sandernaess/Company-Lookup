@@ -23,7 +23,7 @@ namespace CompanyLookup.Api.Mapping.Companies
             };
         }
 
-        private static string? MapToAddress(EnhetAdresse enhetAdresse)
+        private static string? MapToAddress(EnhetAdresseResponse enhetAdresse)
         {
             var firstRegisteredAdresse = enhetAdresse.Adresse?.FirstOrDefault();
             if (firstRegisteredAdresse is null)
