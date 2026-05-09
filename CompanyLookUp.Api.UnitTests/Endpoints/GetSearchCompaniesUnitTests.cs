@@ -29,7 +29,7 @@ namespace CompanyLookUp.Api.UnitTests.Endpoints
         public async Task Handle_With_Invalid_Name_Returns_BadRequest(string? name)
         {
             // Arrange
-            var request = new CompanySearchRequest { Name = name, Page = 1, Size = 10 };
+            var request = new CompanySearchRequest { Name = name!, Page = 1, Size = 10 };
 
             // Act
             var result = await GetSearchCompanies.Handle(request, _searchService, _ct);
@@ -82,6 +82,7 @@ namespace CompanyLookUp.Api.UnitTests.Endpoints
         {
             // Arrange
             var request = new CompanySearchRequest { Name = "Test", Page = 1, Size = 10 };
+
             _searchService.SearchAsync(Arg.Any<CompanySearchQuery>(), _ct)
                 .ThrowsAsync(new Exception("Service error"));
 
