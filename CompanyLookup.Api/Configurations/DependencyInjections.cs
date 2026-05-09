@@ -9,6 +9,7 @@ namespace CompanyLookup.Api.Configurations
         public static IServiceCollection AddInternalServices(this IServiceCollection services)
         {
             services.AddScoped<ICompanyService, CompanyService>();
+            services.AddScoped<ICompanySearchService, CompanySearchService>();
 
             return services;
         }
