@@ -29,14 +29,19 @@ namespace CompanyLookup.Api.External.Brreg.Services.Enhet
             }
 
             var name = query.Name.Trim();
-
             var encodedName = Uri.EscapeDataString(name);
 
-            var page = Math.Max(query.Page, DefaultPage);
-            var size = Math.Clamp(query.Size, DefaultSize, MaxSize);
+            var endpoint = $"enheter?navn={encodedName}";
 
-            var endpoint =
-                $"enheter?navn={encodedName}&page={page}&size={size}";
+            if (query.Page.HasValue)
+            {
+                endpoint += $"&page={query.Page}";
+            }
+
+            if (query.Size.HasValue)
+            {
+                endpoint += $"&size={query.Size}";
+            }
 
             var result = await _apiClient.GetAsync<EnhetSearchResponse>(
                 endpoint,

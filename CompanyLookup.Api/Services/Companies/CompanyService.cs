@@ -14,34 +14,13 @@ namespace CompanyLookup.Api.Services.Companies
                 throw new ArgumentException("Organization number cannot be empty.", nameof(orgnr));
             }
             
-            EnhetResponse? response = await service.GetEnhetAsync(orgnr, cancellationToken);
-            if (response is null)
+            EnhetResponse? enhet = await service.GetEnhetAsync(orgnr, cancellationToken);
+            if (enhet is null)
             {
                 throw new Exception("Enhet not found in brreg");
             }
 
-            return response.ToCompany();
-        }
-
-        public async Task<IEnumerable<CompanyResponse>> SearchAsync(string name, int page, int size, CancellationToken cancellationToken)
-        {
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                throw new ArgumentException("Name cannot be empty.", nameof(name));
-            }
-
-            var query = new EnhetSearchQuery(name, page, size);
-
-            IEnumerable<EnhetResponse> response = await service.SearchEnheterByNameAsync(
-                query, 
-                cancellationToken);
-
-            if (response is null || !response.Any())
-            {
-                return [];
-            }
-
-            return response.Select(r => r.ToCompany());
+            return enhet.ToCompany();
         }
     }
 }
