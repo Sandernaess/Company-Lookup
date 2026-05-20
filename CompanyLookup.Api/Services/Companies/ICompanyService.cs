@@ -1,9 +1,10 @@
-﻿using CompanyLookup.Api.Models.Companies;
+﻿using CompanyLookup.Api.Common;
+using CompanyLookup.Api.Models.Companies;
 
 namespace CompanyLookup.Api.Services.Companies
 {
     public interface ICompanyService
     {
-        Task<CompanyResponse> GetAsync(string orgnr, CancellationToken cancellationToken);
+        Task<Result<CompanyResponse>> GetAsync(string orgnr, CancellationToken cancellationToken);
     }
 }

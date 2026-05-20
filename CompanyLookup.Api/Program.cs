@@ -3,8 +3,6 @@ using CompanyLookup.Api.Endpoints;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 builder.Services.AddHttpClient();
 
@@ -15,6 +13,15 @@ builder.Services.AddInternalServices();
 builder.Services.AddExternalServices();
 
 var app = builder.Build();
+
+app.UseExceptionHandler(err => err.Run(async context =>
+{
+    context.Response.StatusCode = 500;
+    await context.Response.WriteAsJsonAsync(new
+    {
+        error = "An unexpected error occurred."
+    });
+}));
 
 app.MapCompaniesEndpoints();
 

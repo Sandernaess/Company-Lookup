@@ -8,7 +8,7 @@
         private static string GetValidatedBaseUrl(string? baseUrl)
         {
             if (string.IsNullOrWhiteSpace(baseUrl))
-                throw new Exception("Missing BrregApiUrl configuration value");
+                throw new InvalidOperationException("Missing BrregApiUrl configuration value.");
 
             return NormalizeUrl(baseUrl);
         }

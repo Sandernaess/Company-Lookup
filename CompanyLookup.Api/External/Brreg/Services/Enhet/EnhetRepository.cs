@@ -2,13 +2,9 @@
 
 namespace CompanyLookup.Api.External.Brreg.Services.Enhet
 {
-    public class EnhetService(IBrregApiClient brregApiClient) : IEnhetService
+    public class EnhetRepository(IBrregApiClient brregApiClient) : IEnhetRepository
     {
         private readonly IBrregApiClient _apiClient = brregApiClient;
-
-        private const int DefaultPage = 1;
-        private const int DefaultSize = 10;
-        private const int MaxSize = 20;
 
         public async Task<EnhetResponse?> GetEnhetAsync(
             string orgnr, 

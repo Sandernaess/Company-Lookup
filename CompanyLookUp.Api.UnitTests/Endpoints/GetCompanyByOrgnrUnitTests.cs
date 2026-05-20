@@ -1,4 +1,5 @@
-﻿using CompanyLookup.Api.Endpoints.Companies;
+﻿using CompanyLookup.Api.Common;
+using CompanyLookup.Api.Endpoints.Companies;
 using CompanyLookup.Api.Models.Companies;
 using CompanyLookup.Api.Services.Companies;
 using Microsoft.AspNetCore.Http;
@@ -56,15 +57,17 @@ namespace CompanyLookUp.Api.UnitTests.Endpoints
         }
 
         [TestMethod]
-        public async Task Handle_With_Valid_Orgnr_But_Null_Company_Returns_NotFound()
+        public async Task Handle_With_Valid_Orgnr_But_None_Company_Given_Returns_NotFound()
         {
             var orgnr = "123456789";
 
-            CompanyResponse? companyResponse = null;
+            var failedResult = Result.Failure<CompanyResponse>(
+                $"Company with orgnr {orgnr} not found.",
+                ErrorType.NotFound);
 
             _companyService
                 .GetAsync(orgnr, _ct)
-                .Returns(companyResponse!);
+                .Returns(failedResult);
 
             var result = await GetCompanyByOrgnr
                 .Handle(orgnr, _companyService, _ct);
@@ -83,7 +86,7 @@ namespace CompanyLookUp.Api.UnitTests.Endpoints
 
             _companyService
                 .GetAsync(orgnr, _ct)
-                .Returns(company);
+                .Returns(Result.Success(company));
 
             var result = await GetCompanyByOrgnr.Handle(orgnr, _companyService, _ct);
 
@@ -96,19 +99,16 @@ namespace CompanyLookUp.Api.UnitTests.Endpoints
         }
 
         [TestMethod]
-        public async Task Handle_When_Service_Throws_Exception_Returns_InternalServerError()
+        public async Task Handle_When_Service_Throws_Exception_Propagates()
         {
             var orgnr = "123456789";
 
             _companyService
                 .GetAsync(orgnr, _ct)
-                .ThrowsAsync(new Exception("Database connection failed"));
+                .Throws(new HttpRequestException("Database connection failed"));
 
-            var result = await GetCompanyByOrgnr.Handle(orgnr, _companyService, _ct);
-
-            var internalServerErrorResult = result as IStatusCodeHttpResult;
-            Assert.IsNotNull(internalServerErrorResult);
-            Assert.AreEqual((int)HttpStatusCode.InternalServerError, internalServerErrorResult.StatusCode);
+            await Assert.ThrowsExactlyAsync<HttpRequestException>(
+                () => GetCompanyByOrgnr.Handle(orgnr, _companyService, _ct));
         }
 
         [TestMethod]
@@ -119,7 +119,7 @@ namespace CompanyLookUp.Api.UnitTests.Endpoints
 
             _companyService
                 .GetAsync(orgnr, _ct)
-                .Returns(company);
+                .Returns(Result.Success(company));
 
             await GetCompanyByOrgnr.Handle(orgnr, _companyService, _ct);
 

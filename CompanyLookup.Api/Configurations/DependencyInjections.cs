@@ -17,7 +17,7 @@ namespace CompanyLookup.Api.Configurations
         public static IServiceCollection AddExternalServices(this IServiceCollection services)
         {
             services.AddScoped<IBrregApiClient, BrregApiClient>();
-            services.AddScoped<IEnhetService, EnhetService>();
+            services.AddScoped<IEnhetRepository, EnhetRepository>();
             
             return services;
         }

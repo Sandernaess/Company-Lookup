@@ -1,4 +1,5 @@
-﻿using CompanyLookup.Api.Services.Companies;
+﻿using CompanyLookup.Api.Common;
+using CompanyLookup.Api.Services.Companies;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CompanyLookup.Api.Endpoints.Companies
@@ -10,32 +11,19 @@ namespace CompanyLookup.Api.Endpoints.Companies
             [FromServices] ICompanyService service,
             CancellationToken cancellationToken)
         {
-            try
+            if (string.IsNullOrWhiteSpace(orgnr))
             {
-                if (string.IsNullOrWhiteSpace(orgnr)) {
-                    return Results.BadRequest("Missing orgnr.");
-                }
-
-                if (orgnr.Length != 9)
-                {
-                    return Results.BadRequest("Orgnr must be 9 digits long.");
-                }
-
-                var company = await service.GetAsync(orgnr, cancellationToken);
-                if (company is null)
-                {
-                    return Results.NotFound($"Company with orgnr {orgnr} not found.");
-                }
-
-                return Results.Ok(company);
+                return TypedResults.BadRequest("Orgnr is required.");
             }
-            catch (Exception ex)
+
+            if (orgnr.Length != 9)
             {
-                var errorMsg = $"Unknown error occured when fetching company with orgnr: {orgnr} - {ex.Message}";
-                Console.WriteLine(errorMsg); // TODO: Log to a logging framework
-
-                return Results.InternalServerError();
+                return TypedResults.BadRequest("Orgnr must be 9 digits long.");
             }
+
+            var result = await service.GetAsync(orgnr, cancellationToken);
+
+            return result.ToHttpResult();
         }
     }
 }

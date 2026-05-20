@@ -1,3 +1,4 @@
+using CompanyLookup.Api.Common;
 using CompanyLookup.Api.Endpoints.Companies;
 using CompanyLookup.Api.Models.Companies;
 using CompanyLookup.Api.Services.Companies;
@@ -65,7 +66,9 @@ namespace CompanyLookUp.Api.UnitTests.Endpoints
                 new() { OrganizationNumber = "123", Name = "Test", HasRegisteredEmployeeCount = false }
             };
 
-            _searchService.SearchAsync(Arg.Any<CompanySearchQuery>(), _ct).Returns(companies);
+            _searchService
+                .SearchAsync(Arg.Any<CompanySearchQuery>(), _ct)
+                .Returns(Result.Success<IEnumerable<CompanyResponse>>(companies));
 
             // Act
             var result = await GetSearchCompanies.Handle(request, _searchService, _ct);
@@ -78,21 +81,18 @@ namespace CompanyLookUp.Api.UnitTests.Endpoints
         }
 
         [TestMethod]
-        public async Task Handle_When_Service_Throws_Exception_Returns_InternalServerError()
+        public async Task Handle_When_Service_Throws_Exception_Propagates()
         {
             // Arrange
             var request = new CompanySearchRequest { Name = "Test", Page = 1, Size = 10 };
 
-            _searchService.SearchAsync(Arg.Any<CompanySearchQuery>(), _ct)
+            _searchService
+                .SearchAsync(Arg.Any<CompanySearchQuery>(), _ct)
                 .ThrowsAsync(new Exception("Service error"));
 
-            // Act
-            var result = await GetSearchCompanies.Handle(request, _searchService, _ct);
-
-            // Assert
-            var statusCodeResult = result as IStatusCodeHttpResult;
-            Assert.IsNotNull(statusCodeResult);
-            Assert.AreEqual((int)HttpStatusCode.InternalServerError, statusCodeResult.StatusCode);
+            // Act & Assert
+            await Assert.ThrowsExactlyAsync<Exception>(
+                () => GetSearchCompanies.Handle(request, _searchService, _ct));
         }
 
         [TestMethod]
@@ -105,7 +105,7 @@ namespace CompanyLookUp.Api.UnitTests.Endpoints
 
             _searchService
                 .SearchAsync(Arg.Do<CompanySearchQuery>(q => capturedQuery = q), _ct)
-                .Returns(companies);
+                .Returns(Result.Success<IEnumerable<CompanyResponse>>(companies));
 
             // Act
             await GetSearchCompanies.Handle(request, _searchService, _ct);
@@ -129,7 +129,9 @@ namespace CompanyLookUp.Api.UnitTests.Endpoints
                 new() { OrganizationNumber = "2", Name = "B", HasRegisteredEmployeeCount = true }
             };
 
-            _searchService.SearchAsync(Arg.Any<CompanySearchQuery>(), _ct).Returns(companies);
+            _searchService
+                .SearchAsync(Arg.Any<CompanySearchQuery>(), _ct)
+                .Returns(Result.Success<IEnumerable<CompanyResponse>>(companies));
 
             // Act
             var result = await GetSearchCompanies.Handle(request, _searchService, _ct);
@@ -151,7 +153,9 @@ namespace CompanyLookUp.Api.UnitTests.Endpoints
             var tokenSource = new CancellationTokenSource();
             var token = tokenSource.Token;
 
-            _searchService.SearchAsync(Arg.Any<CompanySearchQuery>(), token).Returns(companies);
+            _searchService
+                .SearchAsync(Arg.Any<CompanySearchQuery>(), token)
+                .Returns(Result.Success<IEnumerable<CompanyResponse>>(companies));
 
             // Act
             await GetSearchCompanies.Handle(request, _searchService, token);
@@ -165,7 +169,10 @@ namespace CompanyLookUp.Api.UnitTests.Endpoints
         {
             // Arrange
             var request = new CompanySearchRequest { Name = "Test", Page = 1, Size = 10 };
-            _searchService.SearchAsync(Arg.Any<CompanySearchQuery>(), _ct).Returns(Array.Empty<CompanyResponse>());
+
+            _searchService
+                .SearchAsync(Arg.Any<CompanySearchQuery>(), _ct)
+                .Returns(Result.Success<IEnumerable<CompanyResponse>>([]));
 
             // Act
             var result = await GetSearchCompanies.Handle(request, _searchService, _ct);

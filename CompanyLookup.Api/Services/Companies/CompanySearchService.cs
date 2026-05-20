@@ -1,3 +1,4 @@
+using CompanyLookup.Api.Common;
 using CompanyLookup.Api.External.Brreg.Models.Enhet;
 using CompanyLookup.Api.External.Brreg.Services.Enhet;
 using CompanyLookup.Api.Mapping.Companies;
@@ -5,30 +6,29 @@ using CompanyLookup.Api.Models.Companies;
 
 namespace CompanyLookup.Api.Services.Companies
 {
-    public class CompanySearchService(IEnhetService service) : ICompanySearchService
+    public class CompanySearchService(IEnhetRepository repository) : ICompanySearchService
     {
-        public async Task<IEnumerable<CompanyResponse>> SearchAsync(CompanySearchQuery query, CancellationToken cancellationToken)
+        public async Task<Result<IEnumerable<CompanyResponse>>> SearchAsync(CompanySearchQuery query, CancellationToken cancellationToken)
         {
+            ArgumentNullException.ThrowIfNull(query);
+
             if (string.IsNullOrWhiteSpace(query.Name))
             {
-                throw new ArgumentException("Name cannot be empty.", nameof(query));
+                return Result.Failure<IEnumerable<CompanyResponse>>(
+                    "Name cannot be empty.",
+                    ErrorType.Validation);
             }
 
             var enhetQuery = new EnhetSearchQuery(
-                query.Name, 
-                query.Page, 
+                query.Name,
+                query.Page,
                 query.Size);
 
-            IEnumerable<EnhetResponse> enheter = await service.SearchEnheterByNameAsync(
-                enhetQuery, 
+            IEnumerable<EnhetResponse> enheter = await repository.SearchEnheterByNameAsync(
+                enhetQuery,
                 cancellationToken);
 
-            if (enheter is null || !enheter.Any())
-            {
-                return [];
-            }
-
-            return enheter.Select(r => r.ToCompany());
+            return Result.Success(enheter.Select(e => e.ToCompany()));
         }
     }
 }

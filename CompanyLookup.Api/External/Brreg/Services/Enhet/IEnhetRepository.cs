@@ -2,7 +2,7 @@
 
 namespace CompanyLookup.Api.External.Brreg.Services.Enhet
 {
-    public interface IEnhetService
+    public interface IEnhetRepository
     {
         Task<EnhetResponse?> GetEnhetAsync(string orgnr, CancellationToken cancellationToken);
         Task<IEnumerable<EnhetResponse>> SearchEnheterByNameAsync(

@@ -1,4 +1,5 @@
-﻿using CompanyLookup.Api.External.Brreg.Models.Enhet;
+﻿using CompanyLookup.Api.Common;
+using CompanyLookup.Api.External.Brreg.Models.Enhet;
 using CompanyLookup.Api.External.Brreg.Services.Enhet;
 using CompanyLookup.Api.Services.Companies;
 using NSubstitute;
@@ -8,15 +9,15 @@ namespace CompanyLookUp.Api.UnitTests.Services
     [TestClass]
     public sealed class CompanyServiceUnitTests
     {
-        private IEnhetService _enhetService = null!;
+        private IEnhetRepository _repository = null!;
         private CompanyService _companyService = null!;
         private CancellationToken _ct;
 
         [TestInitialize]
         public void Setup()
         {
-            _enhetService = Substitute.For<IEnhetService>();
-            _companyService = new CompanyService(_enhetService);
+            _repository = Substitute.For<IEnhetRepository>();
+            _companyService = new CompanyService(_repository);
             _ct = CancellationToken.None;
         }
 
@@ -24,28 +25,27 @@ namespace CompanyLookUp.Api.UnitTests.Services
         [DataRow(null)]
         [DataRow("")]
         [DataRow("   ")]
-        public async Task GetAsync_With_Invalid_Orgnr_Throws_ArgumentException(string invalidOrgnr)
+        public async Task GetAsync_With_Invalid_Orgnr_Returns_ValidationFailure(string invalidOrgnr)
         {
-            var ex = await Assert.ThrowsExactlyAsync<ArgumentException>(
-                () => _companyService.GetAsync(invalidOrgnr, _ct));
+            var result = await _companyService.GetAsync(invalidOrgnr, _ct);
 
-            Assert.Contains("orgnr", ex.Message);
+            Assert.IsFalse(result.IsSuccess);
+            Assert.AreEqual(ErrorType.Validation, result.ErrorType);
         }
 
         [TestMethod]
-        public async Task GetAsync_With_Null_Response_Throws_Exception()
+        public async Task GetAsync_When_Enhet_Is_Null_Returns_NotFound()
         {
             var orgnr = "123456789";
 
-            _enhetService
+            _repository
                 .GetEnhetAsync(orgnr, _ct)
                 .Returns((EnhetResponse?)null);
 
-            var exception = await Assert.ThrowsExactlyAsync<Exception>(
-                async () => await _companyService.GetAsync(orgnr, _ct)
-            );
+            var result = await _companyService.GetAsync(orgnr, _ct);
 
-            Assert.AreEqual("Enhet not found in brreg", exception.Message);
+            Assert.IsFalse(result.IsSuccess);
+            Assert.AreEqual(ErrorType.NotFound, result.ErrorType);
         }
 
         [TestMethod]
@@ -55,13 +55,13 @@ namespace CompanyLookUp.Api.UnitTests.Services
          
             var enhetResponse = CreateSampleEnhetResponse(orgnr);
 
-            _enhetService
+            _repository
                 .GetEnhetAsync(orgnr, _ct)
                 .Returns(enhetResponse);
 
             await _companyService.GetAsync(orgnr, _ct);
 
-            await _enhetService
+            await _repository
                 .Received(1)
                 .GetEnhetAsync(orgnr, _ct);
         }
@@ -72,16 +72,16 @@ namespace CompanyLookUp.Api.UnitTests.Services
             var orgnr = "123456789";
             var enhetResponse = CreateSampleEnhetResponse(orgnr);
 
-            _enhetService
+            _repository
                 .GetEnhetAsync(orgnr, CancellationToken.None)
                 .Returns(enhetResponse);
 
             var result = await _companyService.GetAsync(orgnr, CancellationToken.None);
 
             Assert.IsNotNull(result);
-            Assert.AreEqual(orgnr, result.OrganizationNumber);
-            Assert.AreEqual("Test Company", result.Name);
-            Assert.AreEqual(10, result.EmployeeCount);
+            Assert.AreEqual(orgnr, result.Value?.OrganizationNumber);
+            Assert.AreEqual("Test Company", result.Value?.Name);
+            Assert.AreEqual(10, result.Value?.EmployeeCount);
         }
 
         private static EnhetResponse CreateSampleEnhetResponse(string orgnr = "123456789")
